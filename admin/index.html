@@ -7,45 +7,68 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="NC Admin">
   <title>Noble Crest Admin &middot; Auto Dialer</title>
-  <meta http-equiv="refresh" content="2; url=https://friend-itunes-julia-months.trycloudflare.com/">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
     .card { background: #151c2e; border: 1px solid #26304a; border-radius: 20px; padding: 2.5rem 2rem; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-    .badge { display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.3rem 0.75rem; border-radius: 999px; margin-bottom: 1rem; }
+    .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.3rem 0.75rem; border-radius: 999px; margin-bottom: 1rem; transition: background 0.4s; }
+    .badge.online { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .badge.checking { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+    .badge.offline { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
     .brand { color: #94a3b8; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     h1 { color: #38bdf8; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
     .subtitle { color: #64748b; font-size: 0.8rem; margin-bottom: 1.25rem; }
     .status { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.25rem; }
-    .dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.5); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
-    .status-text { color: #10b981; font-size: 0.78rem; font-weight: 600; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; transition: background 0.4s; }
+    .dot.online { background: #10b981; animation: pulse-green 2s ease-in-out infinite; }
+    .dot.checking { background: #f59e0b; animation: pulse-yellow 2s ease-in-out infinite; }
+    .dot.offline { background: #ef4444; animation: pulse-red 2s ease-in-out infinite; }
+    @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
+    @keyframes pulse-yellow { 0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); } 50% { box-shadow: 0 0 0 6px rgba(245,158,11,0); } }
+    @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); } }
+    .status-text { font-size: 0.78rem; font-weight: 600; transition: color 0.4s; }
+    .status-text.online { color: #10b981; }
+    .status-text.checking { color: #f59e0b; }
+    .status-text.offline { color: #ef4444; }
     .spinner { width: 36px; height: 36px; border: 3px solid #26304a; border-top-color: #38bdf8; border-radius: 50%; margin: 1rem auto 0.75rem; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    p { color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem; }
+    .msg { color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem; }
     a { color: #38bdf8; text-decoration: none; word-break: break-all; }
     a:hover { text-decoration: underline; }
-    .btn { display: inline-block; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 2rem; border-radius: 10px; text-decoration: none; margin-top: 1rem; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(56,189,248,0.3); }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(56,189,248,0.45); text-decoration: none; }
+    .btn { display: inline-block; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 2rem; border-radius: 10px; text-decoration: none; margin-top: 1rem; transition: transform 0.15s, box-shadow 0.15s, background 0.4s; border: none; cursor: pointer; }
+    .btn.online { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; box-shadow: 0 4px 20px rgba(56,189,248,0.3); }
+    .btn.online:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(56,189,248,0.45); }
+    .btn.offline { background: linear-gradient(135deg, #475569, #334155); color: #94a3b8; box-shadow: none; cursor: default; }
+    .btn.retry { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 20px rgba(245,158,11,0.3); }
+    .btn.retry:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(245,158,11,0.45); }
+    .offline-detail { margin-top: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; font-size: 0.75rem; color: #f87171; line-height: 1.5; display: none; }
     .divider { border: none; border-top: 1px solid #26304a; margin: 1.25rem 0; }
     .footer { font-size: 0.65rem; color: #475569; line-height: 1.6; }
     .footer strong { color: #64748b; }
     .clock { color: #94a3b8; font-size: 0.75rem; font-variant-numeric: tabular-nums; margin-top: 0.5rem; }
+    .retry-timer { font-size: 0.7rem; color: #64748b; margin-top: 0.5rem; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="badge">Admin Access</div>
+    <div id="badge" class="badge checking">Admin Access</div>
     <div class="brand">Noble Crest Management</div>
     <h1>Auto Dialer</h1>
     <p class="subtitle">24 / 7 / 365 &mdash; Always On</p>
     <div class="status">
-      <span class="dot"></span>
-      <span class="status-text">System Online</span>
+      <span id="dot" class="dot checking"></span>
+      <span id="status-text" class="status-text checking">Checking tunnel&hellip;</span>
     </div>
-    <div class="spinner"></div>
-    <p>Connecting to dialer&hellip;</p>
-    <a id="fallback" class="btn" href="https://friend-itunes-julia-months.trycloudflare.com">Launch Dialer Now</a>
+    <div id="spinner" class="spinner"></div>
+    <p id="msg" class="msg">Connecting to dialer&hellip;</p>
+    <a id="action-btn" class="btn online" href="#">Launch Dialer Now</a>
+    <div id="offline-detail" class="offline-detail">
+      The Cloudflare tunnel has expired or is unreachable.<br>
+      The server needs to restart <strong>cloudflared</strong> to generate a new tunnel.<br>
+      This page will auto-retry every 30 seconds.
+    </div>
+    <p id="retry-timer" class="retry-timer hidden"></p>
     <hr class="divider">
     <div class="footer">
       <strong>Stable admin link</strong> &middot; auto-updated on tunnel rotation<br>
@@ -55,13 +78,110 @@
   </div>
   <script>
     (function(){
-      var target = "https://friend-itunes-julia-months.trycloudflare.com";
-      var suffix = window.location.pathname.replace(/^\/nc-dial\/admin\/?/, '/') || '/';
-      if (suffix === '/index.html') suffix = '/';
-      var q = window.location.search || '';
-      var h = window.location.hash || '';
-      var url = target.replace(/\/$/, '') + suffix + q + h;
-      document.getElementById('fallback').href = url;
+      var TUNNEL = "https://friend-itunes-julia-months.trycloudflare.com";
+      var RETRY_INTERVAL = 30; // seconds between retries
+      var CHECK_TIMEOUT = 6000; // ms to wait for tunnel response
+
+      // Build redirect URL preserving path/query/hash
+      function buildUrl() {
+        var suffix = window.location.pathname.replace(/^\/nc-dial\/admin\/?/, '/') || '/';
+        if (suffix === '/index.html') suffix = '/';
+        var q = window.location.search || '';
+        var h = window.location.hash || '';
+        return TUNNEL.replace(/\/$/, '') + suffix + q + h;
+      }
+
+      var url = buildUrl();
+
+      // DOM refs
+      var badge = document.getElementById('badge');
+      var dot = document.getElementById('dot');
+      var statusText = document.getElementById('status-text');
+      var spinner = document.getElementById('spinner');
+      var msg = document.getElementById('msg');
+      var actionBtn = document.getElementById('action-btn');
+      var offlineDetail = document.getElementById('offline-detail');
+      var retryTimer = document.getElementById('retry-timer');
+
+      function setState(state) {
+        badge.className = 'badge ' + state;
+        dot.className = 'dot ' + state;
+        statusText.className = 'status-text ' + state;
+
+        if (state === 'checking') {
+          statusText.innerHTML = 'Checking tunnel&hellip;';
+          spinner.style.display = 'block';
+          msg.textContent = 'Connecting to dialer\u2026';
+          actionBtn.className = 'btn online';
+          actionBtn.href = url;
+          actionBtn.textContent = 'Launch Dialer Now';
+          actionBtn.onclick = null;
+          offlineDetail.style.display = 'none';
+          retryTimer.classList.add('hidden');
+        } else if (state === 'online') {
+          statusText.textContent = 'System Online';
+          spinner.style.display = 'block';
+          msg.textContent = 'Redirecting\u2026';
+          actionBtn.className = 'btn online';
+          actionBtn.href = url;
+          actionBtn.textContent = 'Launch Dialer Now';
+          actionBtn.onclick = null;
+          offlineDetail.style.display = 'none';
+          retryTimer.classList.add('hidden');
+        } else if (state === 'offline') {
+          statusText.textContent = 'Dialer Offline';
+          spinner.style.display = 'none';
+          msg.textContent = 'Tunnel is down \u2014 waiting for reconnect';
+          actionBtn.className = 'btn retry';
+          actionBtn.href = '#';
+          actionBtn.textContent = 'Retry Now';
+          actionBtn.onclick = function(e) { e.preventDefault(); checkTunnel(); };
+          offlineDetail.style.display = 'block';
+        }
+      }
+
+      // Health check: try to fetch the tunnel. If DNS is dead or server
+      // unreachable, the fetch will throw a network error we can catch.
+      function checkTunnel() {
+        setState('checking');
+
+        var controller = new AbortController();
+        var timeout = setTimeout(function(){ controller.abort(); }, CHECK_TIMEOUT);
+
+        fetch(TUNNEL, { mode: 'no-cors', signal: controller.signal })
+          .then(function() {
+            clearTimeout(timeout);
+            // no-cors gives opaque response (status 0) but if we got here
+            // the server is reachable
+            setState('online');
+            setTimeout(function(){ window.location.replace(url); }, 800);
+          })
+          .catch(function() {
+            clearTimeout(timeout);
+            setState('offline');
+            startRetryCountdown();
+          });
+      }
+
+      // Countdown to next auto-retry
+      var countdownId = null;
+      function startRetryCountdown() {
+        if (countdownId) clearInterval(countdownId);
+        var remaining = RETRY_INTERVAL;
+        retryTimer.classList.remove('hidden');
+        retryTimer.textContent = 'Auto-retry in ' + remaining + 's';
+        countdownId = setInterval(function() {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(countdownId);
+            countdownId = null;
+            retryTimer.classList.add('hidden');
+            checkTunnel();
+          } else {
+            retryTimer.textContent = 'Auto-retry in ' + remaining + 's';
+          }
+        }, 1000);
+      }
 
       // Live clock
       function tick() {
@@ -74,8 +194,8 @@
       tick();
       setInterval(tick, 1000);
 
-      // Auto-redirect after brief splash
-      setTimeout(function(){ window.location.replace(url); }, 2000);
+      // Initial check
+      checkTunnel();
     })();
   </script>
 </body>
